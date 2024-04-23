@@ -1,0 +1,46 @@
+version: '3.3'
+
+networks:
+  java-api_prime:
+    external: true
+
+services:
+  api:
+    container_name: java-gateway
+    depends_on:
+      - redis_cache
+    image: registry.gitlab.com/prime-int/mentors/internship-team/internship-java-gateway:develop
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      SPRING_REDIS_HOST: redis_cache
+      SPRING_REDIS_PORT: 6379 
+      
+  #     springdoc:
+  # api-docs:
+  #   enabled: true
+  #   path: '/v3/api-docs'
+  # swagger-ui:
+  #   path: '/swagger-ui'
+  #   config-url: '/ingress-path/v3/api-docs/swagger-config'
+  #   url: '/ingress-path/v3/api-docs'
+  #   doc-expansion: none
+  #   disable-swagger-default-url: true
+
+    networks:
+      - java-api_prime
+    links:
+      - redis_cache
+  redis_cache:
+    container_name: java-gateway-redis
+    networks:
+      - java-api_prime
+    image: redis
+    restart: on-failure
+    # command: [ "redis-server","--bind","redis_cache","--port","6379" ]
+    ports:
+      - "6379:6379"
+
+      
+

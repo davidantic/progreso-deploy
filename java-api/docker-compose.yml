@@ -1,0 +1,61 @@
+version: '3.3'
+
+networks:
+  prime:
+    driver: bridge
+
+services:
+  api:
+    container_name: java-api
+    depends_on:
+      - db
+    image: registry.gitlab.com/prime-int/mentors/internship-team/internship-java-api:develop
+    ports:
+      - "8080:8080"
+    restart: always
+    networks:
+      - prime
+    volumes:
+      - ./uploads:/uploads
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/progreso?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_JAVA_API_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_JAVA_API_PASSWORD}
+      SPRING_DATASOURCE_HIKARI_MAXLIFETIME: 60000
+      SPRING_DATASOURCE_HIKARI_CONNECTION-TIMEOUT: 20000
+      SPRING_DATASOURCE_HIKARI_MINIMUM-IDLE: 20
+      SPRING_DATASOURCE_HIKARI_MAXIMUM-POOL-SIZE: 40
+      SPRING_DATASOURCE_HIKARI_IDLE-TIMEOUT: 20000
+      SPRING_DATASOURCE_HIKARI_MAX-LIFETIME: 20000
+      SPRING_DATASOURCE_HIKARI_AUTO-COMMIT: 'true'
+
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: 'false'
+      SPRING_JPA_SHOW-SQL: 'false'
+    
+    links:
+      - db:db
+
+  db:
+    container_name: java-api-db
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - prime
+    environment:
+      MYSQL_DATABASE: ${MYSQL_JAVA_API_DATABASE} 
+      MYSQL_USER: ${MYSQL_JAVA_API_USER}
+      MYSQL_PASSWORD: ${MYSQL_JAVA_API_PASSWORD}     
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    # ports:
+    #   - '3306'
+
+      #This property defines the ports that Docker Compose exposes from the container.
+  #These ports will be accessible by other services connected to the same network, but won't be published on the host machine.
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql-db
+  
+volumes:
+  my-db:

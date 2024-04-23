@@ -1,0 +1,39 @@
+version: '3.3'
+
+networks:
+  java-api_prime:
+    external: true
+
+services:
+  api:
+    image: registry.gitlab.com/prime-int/mentors/internship-team/internship-nestjs-api:main
+    container_name: nodejs-api
+    hostname: nodejs-api
+    networks:
+      - java-api_prime
+    ports:
+      - "8082:3000"
+    environment:
+      
+      CONNECTION_STRING: mongodb://progreso:gRpJ1tFz5lreivmyPAYMEeC7ygOqsPIr@db/progreso
+      PORT: 3000
+      API_KEY: key
+
+  db:
+    image: mongo
+    container_name: nodejs-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: progreso
+      MONGO_INITDB_ROOT_PASSWORD: gRpJ1tFz5lreivmyPAYMEeC7ygOqsPIr
+    networks:
+      - java-api_prime
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    expose:
+      - '27017'
+
+volumes:
+  mongodata:  

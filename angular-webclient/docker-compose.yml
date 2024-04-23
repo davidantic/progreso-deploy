@@ -1,0 +1,25 @@
+version: '3.3'
+
+# networks:
+#   java-api_prime:
+#     external: true
+
+services:
+  app:
+    image: registry.gitlab.com/prime-int/mentors/internship-team/internship-angular-app:main
+    container_name: app
+    hostname: app
+    network_mode: "host"       
+    ports:
+      - "8000:80"
+
+      
+    # environment:
+      # - APP_ENV=dev
+      # - TARGET_ENV=development
+
+    # healthcheck:
+    #   test: wget -nv -t1 --spider http://localhost:80/nginx-health
+    #   interval: 1s
+    #   timeout: 5s
+    #   retries: 3
